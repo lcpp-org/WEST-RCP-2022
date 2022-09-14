@@ -1,0 +1,158 @@
+[input_mode]
+hpic_mode = "solps"
+simulation_tag = "west_55866"
+units = "si"
+
+[mesh]
+type = "uniform"
+    [mesh.type_specification]
+    x1_points = [0.0, 0.003]
+    x1_elem_size = 1.5e-05
+
+[time]
+num_time_steps = 10000
+dt = 7.0e-11
+
+[species]
+[species."e-"]
+type = "boltzmann"
+[species."e-".type_params]
+    temperature = 188060.87 #16.2 eV
+    charge_conservation_scheme = "hagelaar"
+
+[species."He+"]
+mass = 6.6464731e-27
+type = "boris_buneman"
+[species."He+".type_params]
+    atomic_number = 2
+    initial_condition = "uniform_beam"
+    [species."He+".type_params.initial_condition_params]
+        num_particles = 200000
+        charge_states = [ { charge_number = 1, density = 1.24e17 }]
+        flow_velocity_1 = 0.0
+        flow_velocity_2 = 0.0
+        flow_velocity_3 = 0.0
+        temperature = 798678.26 #68.8 eV
+    [[species."He+".type_params.boundary_conditions]]
+        boundary = "west"
+        type = "absorbing"
+    [[species."He+".type_params.boundary_conditions]]
+        boundary = "east"
+        type = "absorbing"
+    [[species."He+".type_params.volumetric_sources]]
+        type = "minimum_mass"
+        temperature = 798678.26
+
+[species."He++"]
+mass = 6.6464731e-27
+type = "boris_buneman"
+[species."He++".type_params]
+    atomic_number = 2
+    initial_condition = "uniform_beam"
+    [species."He++".type_params.initial_condition_params]
+        num_particles = 200000
+        charge_states = [ { charge_number = 2, density = 1.17e18 }]
+        flow_velocity_1 = 0.0
+        flow_velocity_2 = 0.0
+        flow_velocity_3 = 0.0
+        temperature = 798678.26 #68.8 eV
+    [[species."He++".type_params.boundary_conditions]]
+        boundary = "west"
+        type = "absorbing"
+    [[species."He++".type_params.boundary_conditions]]
+        boundary = "east"
+        type = "absorbing"
+    [[species."He++".type_params.volumetric_sources]]
+        type = "minimum_mass"
+        temperature = 798678.26
+
+[species."O8+"]
+mass = 2.6566962e-26
+type = "boris_buneman"
+[species."O8+".type_params]
+    atomic_number = 8
+    initial_condition = "uniform_beam"
+    [species."O8+".type_params.initial_condition_params]
+        num_particles = 200000
+        charge_states = [ { charge_number = 8, density = 6.80e16 } ]
+        flow_velocity_1 = 0.0
+        flow_velocity_2 = 0.0
+        flow_velocity_3 = 0.0
+        temperature = 798678.26
+    [[species."O8+".type_params.boundary_conditions]]
+        boundary = "west"
+        type = "absorbing"
+    [[species."O8+".type_params.boundary_conditions]]
+        boundary = "east"
+        type = "absorbing"
+    [[species."O8+".type_params.volumetric_sources]]
+        type = "minimum_mass"
+        temperature = 798678.26
+
+# [interactions.electron_impact_ionization."He+"]
+# electron_species = "e-"
+# A = [4.74785e-56] # 0.185e-13 eV^2 cm^2
+# B = [[2.2841e-56, 3.36199e-56, 9.95765e-56, -2.79995e-55, 3.47491e-55]] # [0.089, 0.131, 0.388, -1.091, 1.354] x 10^-13 eV^2 cm^2
+# I = [8.71488e-18] #54.4 eV
+
+[magnetic_field]
+type = "uniform"
+
+[magnetic_field.type_params]
+b1 = -3.51439171892487
+b2 = -0.581665401694546
+b3 = 0.047183941840953
+
+[electric_potential]
+poisson_solver = "hypre"
+
+[[electric_potential.boundary_conditions]]
+boundary = "west"
+type = "dirichlet"
+function = "constant"
+[electric_potential.boundary_conditions.function_params]
+value = 0.0
+
+[[electric_potential.boundary_conditions]]
+boundary = "east"
+type = "dirichlet"
+function = "constant"
+[electric_potential.boundary_conditions.function_params]
+value = 0.0
+
+[output_diagnostics]
+    output_dir = "west_55866_out_sample_1"
+
+    [output_diagnostics.logging]
+    log_level = true
+    timing_log_enabled = false
+
+    [output_diagnostics.particle_output]
+    stride = 0
+    species = ["He+", "He++", "O8+"]
+
+    [output_diagnostics.moment_output]
+    stride = 1000
+    first_step = false
+    final_step = true
+    species = ["He+", "He++", "O8+", "e-"]
+    lab_frame_moment_exponents = [[0,0,0],[1,0,0],[0,1,0],[0,0,1]]
+    rest_frame_moment_exponents = [[0,0,0],[1,0,0],[0,1,0],[0,0,1],[3,0,0],[1,2,0],[1,0,2],[2,1,0],[0,3,0],[0,1,2],[2,0,1],[0,2,1],[0,0,3]]
+
+    [output_diagnostics.iead_output]
+    stride = 1000
+    first_step = false
+    final_step = true
+        [output_diagnostics.iead_output."He+"]
+        max_energy_te = 60
+        num_energy_bins = 200
+        [output_diagnostics.iead_output."He++"]
+        max_energy_te = 60
+        num_energy_bins = 200
+        [output_diagnostics.iead_output."O8+"]
+        max_energy_te = 60
+        num_energy_bins = 200
+
+
+    [output_diagnostics.field_output]
+    stride = 250
